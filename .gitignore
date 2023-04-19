@@ -2,3 +2,4 @@
 data
 *.ext3
 *.gz
+logs
