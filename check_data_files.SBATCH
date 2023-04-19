@@ -15,8 +15,7 @@
 ##SBATCH --cpus-per-task=24
 
 #SBATCH --time=12:00:00
-#SBATCH --output=demo_%j.out
-#SBATCH --error=demo_%j.err
+#SBATCH --output=logs/data_checks.out
 #SBATCH --exclusive
 #SBATCH --requeue
 
