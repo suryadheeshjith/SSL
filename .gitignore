@@ -3,3 +3,5 @@ data
 *.ext3
 *.gz
 logs
+__pycache__
+Miniconda3-*
