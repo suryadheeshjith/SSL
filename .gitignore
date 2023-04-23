@@ -5,3 +5,4 @@ data
 logs
 __pycache__
 Miniconda3-*
+.ipynb_checkpoints/
