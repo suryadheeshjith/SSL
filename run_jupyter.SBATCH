@@ -26,7 +26,7 @@ port=$(shuf -i 10000-65500 -n 1)
 opts="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -N -f -R $port:localhost:$port"
 
 for((i=1; i<=3; i++)); do
-    /usr/bin/ssh $opts $USER@log-$i.nyu.cluster
+    /usr/bin/ssh $opts $USER@log-$i.nyu.cluster
 done
 
 cat<<EOF
@@ -58,6 +58,4 @@ singularity exec --nv --overlay overlay-15GB-500K.ext3:ro\
     -B data/dataset_v2.sqsh:/dataset:image-src=/\
     -B /scratch\
     /share/apps/images/cuda11.7.99-cudnn8.5-devel-ubuntu22.04.2.sif\
-   /bin/bash -c "
-jupyter notebook --no-browser --port $port --notebook-dir=$(pwd)
-t
+   /bin/bash -c "source /ext3/env.sh; jupyter notebook --no-browser --port $port --notebook-dir=$(pwd)"
