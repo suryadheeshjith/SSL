@@ -725,11 +725,18 @@ def soft_dice_loss(y_pred, y_true, epsilon=1e-6):
     
     return 1 - torch.mean((numerator + epsilon) / (denominator + epsilon))
 
-def focal_loss(pred, target, alpha = 2, gamma = 0.25):
+def focal_loss(pred, target, alpha = 0.25, gamma = 2):
     C = 49
     ce_loss = F.cross_entropy(pred, target, reduction='mean', weight=torch.ones(C).to(device))
     pt = torch.exp(-ce_loss)
-    focal_loss = ((1 - pt) ** gamma * ce_loss).mean()
+    focal_loss = ((1 - pt) ** gamma * ce_loss)
+    
+    if alpha >= 0:
+        alpha_t = alpha * target + (1 - alpha) * (1 - target)
+        focal_loss = alpha_t * focal_loss
+        
+    focal_loss = loss.sum()
+    
     return focal_loss
 
 
