@@ -735,7 +735,7 @@ def focal_loss(pred, target, alpha = 0.25, gamma = 2):
         alpha_t = alpha * target + (1 - alpha) * (1 - target)
         focal_loss = alpha_t * focal_loss
         
-    focal_loss = loss.sum()
+    focal_loss = focal_loss.sum()
     
     return focal_loss
 
