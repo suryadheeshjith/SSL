@@ -13,13 +13,13 @@ The code is divided into 4 main files:
 
 `train.py` - file to run model training
 
-`eval.py` - contains the code required to load the models and evaluate the final predictions
+`eval.py` - file to load the model weights and evaluate the final predictions
 
 ## Model Training
 
 To run training code, simply execute `python train.py`. To run training on the HPC server, run the `train.SBATCH` script. 
 
-By default, the script trains the `FJEPA` model. To train the `UNet` model, uncomment the code below the relevant comment. You can also rename both model names as desired for the `.pth` file, and the best model weights are stores as `best_{model_name}.pth`.
+By default, the script trains the `FJEPA` model. To train the `UNet` model, uncomment the code below the "Train downstream model" comment. You can also rename both model names as desired for the `.pth` file, and the best model weights are stored as `best_{model_name}.pth`.
 
 ## Model evaluation
 
