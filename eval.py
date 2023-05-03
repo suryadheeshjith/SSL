@@ -22,8 +22,6 @@ import torchmetrics
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-
-
 jaccard = torchmetrics.JaccardIndex(task="multiclass", num_classes=49)
 
 def test(downstream_model, JepaModel, epochs, dataloader, criterion):
@@ -278,7 +276,7 @@ def save_tensor(downstream_model, JepaModel, epochs, dataloader, scale = 0.1, r 
             pbar.set_postfix({'Video': j+1}) 
 
     print(final_submit.shape)
-    torch.save(final_submit, "/content/drive/My Drive/Colab Notebooks/Spring23/DL/Project/"+model_name+"_submission.pt")
+    torch.save(final_submit, model_name+"_submission_dummy.pt")
 
 
 
@@ -287,9 +285,9 @@ def save_tensor(downstream_model, JepaModel, epochs, dataloader, scale = 0.1, r 
 
 ## Loading data ##
 
-unlabeled_data = UnlabeledDataset("/content/Dataset_Student/unlabeled")
-labeled_data = LabeledDataset("/content/Dataset_Student/train")
-val_data = LabeledDataset("/content/Dataset_Student/val")
+unlabeled_data = UnlabeledDataset("/dataset/dataset/unlabeled")
+labeled_data = LabeledDataset("/dataset/dataset/train")
+val_data = LabeledDataset("/dataset/dataset/val")
 # hidden_data = UnlabeledDataset("/content/drive/My Drive/Colab Notebooks/Spring23/DL/Project/hidden", 11)
 
 train_dataloader = DataLoader(unlabeled_data, batch_size=3, shuffle=True)
@@ -300,20 +298,23 @@ val_dataloader = DataLoader(val_data, batch_size=1, shuffle=True)
 
 # show_normalized_image(unlabeled_data[10][0])
 
+print("Loaded data")
+
 ## Loading best model weights #
 
 in_features = 3
-model_name = "model_Context_10ep_2500vid2"
-PATH = "/content/drive/My Drive/Colab Notebooks/Spring23/DL/Project/best_"+model_name+".pth"
+model_name = "model_Context_5ep"
+PATH = "best_"+model_name+".pth"
 FJepa_model = FJepa(in_features).to(device)
 FJepa_model.load_state_dict(torch.load(PATH))
 FJepa_model.eval()
 
-PATH = "/content/drive/My Drive/Colab Notebooks/Spring23/DL/Project/best_downstream_model.pth"
+PATH = "best_downstream_model.pth"
 downstream_model = UNet().to(device)
 downstream_model.load_state_dict(torch.load(PATH))
 downstream_model.eval()
 
+print("Loaded models")
 
 ## Evaluate on validation set ##
 
@@ -324,9 +325,9 @@ real_test(downstream_model, FJepa_model, 1, val_dataloader, criterion, scale=0.7
 
 ## Save mask predictions ##
 
-hidden_data = UnlabeledDataset("/content/hidden", 11)
-hidden_dataloader = DataLoader(hidden_data, batch_size=1, shuffle=False)
+# hidden_data = UnlabeledDataset("/dataset/dataset/hidden", 11)
+# hidden_dataloader = DataLoader(hidden_data, batch_size=1, shuffle=False)
 
-save_tensor(downstream_model, FJepa_model, 1, hidden_dataloader, scale=0.75, r=3)
+# save_tensor(downstream_model, FJepa_model, 1, hidden_dataloader, scale=0.75, r=3)
 
 # torch.load("/content/drive/My Drive/Colab Notebooks/Spring23/DL/Project/"+model_name+"_submission.pt").shape

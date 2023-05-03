@@ -16,7 +16,6 @@ plt.rcParams['figure.dpi'] = 100 # change dpi to make plots bigger
 from FJEPA import FJepa,warp
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
 
 # from google.colab import drive
 # drive.mount('/content/drive/', force_remount=True)
@@ -26,9 +25,6 @@ print(device)
 # # !gdown https://drive.google.com/uc?id=1nAH-is1PiRwrKtfstGLsiE1P2pHouU5R # Pranav
 
 # !unzip Dataset_Student_V2_.zip
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
 
 # These numbers are mean and std values for channels of natural images. 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -347,45 +343,44 @@ def show_normalized_image(img, title=None):
 
 ### MAIN ###
 
-unlabeled_data = UnlabeledDataset("/content/Dataset_Student/unlabeled")
-labeled_data = LabeledDataset("/content/Dataset_Student/train")
-val_data = LabeledDataset("/content/Dataset_Student/val")
-# hidden_data = UnlabeledDataset("/content/drive/My Drive/Colab Notebooks/Spring23/DL/Project/hidden", 11)
+if __name__ == "__main__":
 
-train_dataloader = DataLoader(unlabeled_data, batch_size=3, shuffle=True)
-downstream_dataloader = DataLoader(labeled_data, batch_size=3, shuffle=True)
-val_dataloader = DataLoader(val_data, batch_size=1, shuffle=True)
-# hidden_dataloader = DataLoader(hidden_data, batch_size=1, shuffle=True)
+    unlabeled_data = UnlabeledDataset("/dataset/dataset/unlabeled")
+    labeled_data = LabeledDataset("/dataset/dataset/train")
+    val_data = LabeledDataset("/dataset/dataset/val")
+    # hidden_data = UnlabeledDataset("/dataset/dataset/hidden", 11)
 
-
-# show_normalized_image(unlabeled_data[10][0])
-
-
-### Constants for FJepa model
-
-# Train FJepa model
-
-model_name = "model_Context_10ep_2500vid2"
-in_features = 3 
-lm, mu, nu, lambda_a, lambda_b = 0.02, 0.02, 0.01, 1, 1
-frame_diff = 1
-
-# FJepa_model = FJepa(in_features).to(device)
-# PATH = "/content/drive/My Drive/Colab Notebooks/Spring23/DL/Project/best_model_Context_10ep_2500vid.pth"
-# FJepa_model.load_state_dict(torch.load(PATH))
-# optimizer = optim.SGD(FJepa_model.parameters(), lr=1e-5, weight_decay=1e-4, foreach=True)
-
-# train_FJepa(FJepa_model, 5, train_dataloader, FJepa_criterion, optimizer, model_name, frame_diff) # Training the MC JEPA
+    train_dataloader = DataLoader(unlabeled_data, batch_size=3, shuffle=True)
+    downstream_dataloader = DataLoader(labeled_data, batch_size=3, shuffle=True)
+    val_dataloader = DataLoader(val_data, batch_size=1, shuffle=True)
+    # hidden_dataloader = DataLoader(hidden_data, batch_size=1, shuffle=True)
 
 
-### Train downstream model
+    # show_normalized_image(unlabeled_data[10][0])
 
-# in_features_downstream = 16
+    # Train FJepa model
 
-# downstream_model = UNet().to(device)
-# downstream_optimizer = optim.RMSprop(downstream_model.parameters(),
-#                           lr=1e-5, weight_decay=1e-8, momentum=0.999, foreach=True)
+    model_name = "model_Context_5ep"
+    in_features = 3 
+    lm, mu, nu, lambda_a, lambda_b = 0.02, 0.02, 0.01, 1, 1
+    frame_diff = 1
 
-# criterion = nn.CrossEntropyLoss()
+    FJepa_model = FJepa(in_features).to(device)
+    PATH = "best_"+model_name+".pth"
+    FJepa_model.load_state_dict(torch.load(PATH))
+    # optimizer = optim.SGD(FJepa_model.parameters(), lr=1e-5, weight_decay=1e-4, foreach=True)
 
-# train_fine_tune(downstream_model, 5, downstream_dataloader, criterion, downstream_optimizer)
+    # train_FJepa(FJepa_model, 5, train_dataloader, FJepa_criterion, optimizer, model_name, frame_diff) # Training the MC JEPA
+
+
+    ### Train downstream model
+
+    # in_features_downstream = 16
+
+    # downstream_model = UNet().to(device)
+    # downstream_optimizer = optim.RMSprop(downstream_model.parameters(),
+    #                           lr=1e-5, weight_decay=1e-8, momentum=0.999, foreach=True)
+
+    # criterion = nn.CrossEntropyLoss()
+
+    # train_fine_tune(downstream_model, 5, downstream_dataloader, criterion, downstream_optimizer)
