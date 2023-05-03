@@ -226,11 +226,11 @@ def train_FJepa(model, epochs, dataloader, criterion, optimizer, model_name, fra
                 best_model = model.state_dict()
                 
             if j % 30 == 0 and j > 0:
-                torch.save(best_model,"/content/drive/My Drive/Colab Notebooks/Spring23/DL/Project/best_"+model_name+".pth")
+                torch.save(best_model,"best_"+model_name+".pth")
                 pbar.set_postfix({'Video Loss': total_train_loss/(len(frame_list)-frame_diff), 'Saved model with loss': best_loss})
             
         pbar.set_postfix({'Per frame Loss': total_train_loss/(len(frame_list)-frame_diff), 'Saved model at j': j})
-        torch.save(model.state_dict(), "/content/drive/My Drive/Colab Notebooks/Spring23/DL/Project/"+model_name+".pth")
+        torch.save(model.state_dict(), model_name+".pth")
 
 
 def visualize_flow(FJepa_model, dataloader):
@@ -356,21 +356,20 @@ if __name__ == "__main__":
     # hidden_dataloader = DataLoader(hidden_data, batch_size=1, shuffle=True)
 
 
-    # show_normalized_image(unlabeled_data[10][0])
+    print("Loaded data")
 
     # Train FJepa model
 
-    model_name = "model_Context_5ep"
+    model_name = "dummy"
     in_features = 3 
     lm, mu, nu, lambda_a, lambda_b = 0.02, 0.02, 0.01, 1, 1
-    frame_diff = 1
 
     FJepa_model = FJepa(in_features).to(device)
-    PATH = "best_"+model_name+".pth"
-    FJepa_model.load_state_dict(torch.load(PATH))
-    # optimizer = optim.SGD(FJepa_model.parameters(), lr=1e-5, weight_decay=1e-4, foreach=True)
+#     PATH = "best_"+model_name+".pth"
+#     FJepa_model.load_state_dict(torch.load(PATH))
+    optimizer = optim.SGD(FJepa_model.parameters(), lr=1e-5, weight_decay=1e-4, foreach=True)
 
-    # train_FJepa(FJepa_model, 5, train_dataloader, FJepa_criterion, optimizer, model_name, frame_diff) # Training the MC JEPA
+    train_FJepa(FJepa_model, 5, train_dataloader, FJepa_criterion, optimizer, model_name) # Training the MC JEPA
 
 
     ### Train downstream model

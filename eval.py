@@ -276,7 +276,7 @@ def save_tensor(downstream_model, JepaModel, epochs, dataloader, scale = 0.1, r 
             pbar.set_postfix({'Video': j+1}) 
 
     print(final_submit.shape)
-    torch.save(final_submit, model_name+"_submission_dummy.pt")
+    torch.save(final_submit, model_name+"_submission.pt")
 
 
 
@@ -303,7 +303,7 @@ print("Loaded data")
 ## Loading best model weights #
 
 in_features = 3
-model_name = "model_Context_5ep"
+model_name = "dummy"
 PATH = "best_"+model_name+".pth"
 FJepa_model = FJepa(in_features).to(device)
 FJepa_model.load_state_dict(torch.load(PATH))
