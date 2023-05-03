@@ -48,17 +48,6 @@ def test(downstream_model, JepaModel, epochs, dataloader, criterion):
                 mask_list = mask_list.type(torch.LongTensor).to(device)
 
                 mask_pred = downstream_model(img1)
-#               
-                # if i == 20:
-                #     print(mask_pred.shape, mask_list[:,i].shape)
-                #     print(mask_list[:,i][0])
-
-                #     print(jaccard(mask_pred, mask_list[:,i]))
-                #     print((torch.argmax(mask_pred[0], dim=0) == 0).all())
-                #     plt.imshow(mask_list[0][i].cpu())
-                #     plt.show()
-                #     plt.imshow(mask_pred.argmax(dim=1)[0].float().cpu())
-                #     plt.show()
                 loss = criterion(mask_pred, mask_list[:,i])
                 total_train_loss += loss.item()
 
@@ -115,64 +104,12 @@ def real_test(downstream_model, JepaModel, epochs, dataloader, criterion, scale 
             mask_pred = downstream_model(frame_list[10].to(device))
             mask_pred_ = downstream_model(frame_list[10].to(device))
             
-            # img1 = None
-            # img2 = None
-            # for i in range(10):
-            #     if i == 0:
-            #       img1 = img11
-                
-            #     img2 = warp(img1, upflow1*1.25)
-            #     X_t, X_tnext, X_hat_t, X_hat_tnext, f_t_tnext,\
-            #         f_tnext_t, I_hat_t, I_hat_tnext, upflow1 = JepaModel(img1, img2)
-                
-            #     img1 = img2
-
-                # print(f_t_tnext[0].shape, mask_pred.shape)
-                # flow = upflow1*1.25
-            #     mask_pred = warp(mask_pred, upflow1*1.25)
-            #     flow_np = flow.cpu().detach().numpy()
-            #     smoothed = torch.tensor(nd.gaussian_filter(flow_np, sigma=5,radius=(0,0,r,r))).to(device)
-            #     mask_pred = warp(mask_pred, smoothed)
-            # mask_pred = downstream_model(img1)
-            
             
             # final_flow *= 11
             final_flow_np = final_flow.cpu().detach().numpy()
-            # smoothed = torch.tensor(nd.maximum_filter(final_flow_np, size=(1,1,r,r))).to(device)
             final_flow = torch.tensor(nd.gaussian_filter(final_flow_np, sigma=5,radius=(0,0,r,r))).to(device)
             mask_pred = warp(mask_pred, final_flow)
             img1 = warp(img1, final_flow)
-
-
-            # print(smoothed)
-
-            # print(final_flow_np)
-
-            # print(smoothed == final_flow)
-
-            # plt.imshow(unnormalize(img11[0]).detach().cpu().permute(1, 2, 0).numpy())
-            # plt.title("11th Frame")
-            # plt.show()
-            # plt.imshow(unnormalize(frame_list[21][0]).detach().cpu().permute(1, 2, 0).numpy())
-            # plt.title("22nd Frame")
-            # plt.show()
-            # plt.imshow(unnormalize(img1[0]).detach().cpu().permute(1, 2, 0).numpy())
-            # plt.title("Predicted 22nd Frame")
-            # plt.show()
-            
-
-            # print(f_t_tnext)
-            # print(jaccard(mask_pred, mask_list[:,21]))
-            # print((torch.argmax(mask_pred[0], dim=0) == torch.argmax(mask_pred_[0].cpu())).all())
-            # plt.imshow(torch.argmax(mask_pred_[0].cpu(), dim=0))
-            # plt.title("Predicted 11th Mask")
-            # plt.show()
-            # plt.imshow(mask_list[0][21].cpu())
-            # plt.title("22nd Mask")
-            # plt.show()
-            # plt.imshow(torch.argmax(mask_pred[0].cpu(), dim=0))
-            # plt.title("Predicted 22nd Mask")
-            # plt.show()
 
 
             # Calculate True Jaccard
@@ -235,34 +172,6 @@ def save_tensor(downstream_model, JepaModel, epochs, dataloader, scale = 0.1, r 
             mask_pred = warp(mask_pred, final_flow)
 
 
-            #### 2
-            # for i in range(10):
-            #     img1 = frame_list[i].to(device)
-            #     img2 = frame_list[i+1].to(device)
-            #     if i == 9:
-            #       img11 = img2
-            #     X_t, X_tnext, X_hat_t, X_hat_tnext, f_t_tnext,\
-            #     f_tnext_t, I_hat_t, I_hat_tnext, upflow1 = JepaModel(img1, img2)
-
-
-            # mask_pred = downstream_model(frame_list[10].to(device))
-            # img1 = None
-            # img2 = None
-            # for i in range(10):
-            #     if i == 0:
-            #       img1 = img11
-                
-            #     img2 = warp(img1, upflow1*1.25)
-            #     X_t, X_tnext, X_hat_t, X_hat_tnext, f_t_tnext,\
-            #         f_tnext_t, I_hat_t, I_hat_tnext, upflow1 = JepaModel(img1, img2)
-                
-            #     img1 = img2
-
-            #     # print(f_t_tnext[0].shape, mask_pred.shape)
-            #     # flow = upflow1*1.25
-            #     mask_pred = warp(mask_pred, upflow1*1.25)
-
-
             #### Common
             
             mask_pred = torch.argmax(mask_pred[0], dim=0)
@@ -295,15 +204,12 @@ downstream_dataloader = DataLoader(labeled_data, batch_size=3, shuffle=True)
 val_dataloader = DataLoader(val_data, batch_size=1, shuffle=True)
 # hidden_dataloader = DataLoader(hidden_data, batch_size=1, shuffle=True)
 
-
-# show_normalized_image(unlabeled_data[10][0])
-
 print("Loaded data")
 
 ## Loading best model weights #
 
 in_features = 3
-model_name = "dummy"
+model_name = "tester"
 PATH = "best_"+model_name+".pth"
 FJepa_model = FJepa(in_features).to(device)
 FJepa_model.load_state_dict(torch.load(PATH))

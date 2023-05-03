@@ -360,7 +360,7 @@ if __name__ == "__main__":
 
     # Train FJepa model
 
-    model_name = "dummy"
+    model_name = "tester"
     in_features = 3 
     lm, mu, nu, lambda_a, lambda_b = 0.02, 0.02, 0.01, 1, 1
 
